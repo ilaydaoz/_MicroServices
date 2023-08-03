@@ -4,6 +4,7 @@ using Microservices.Catalog.Models;
 using Microservices.Catalog.Settings.Abstract;
 using MicroServices.Shared.Dtos;
 using MongoDB.Driver;
+using static MongoDB.Driver.WriteConcern;
 
 namespace Microservices.Catalog.Services.CategoryServices
 {
@@ -28,14 +29,30 @@ namespace Microservices.Catalog.Services.CategoryServices
 
         }
 
-        public Task<Response<NoContent>> DeleteCategoryAsync(string id)
+        public async Task<Response<NoContent>> DeleteCategoryAsync(string id)
         {
-            throw new NotImplementedException();
+            var value = await _categoryCollection.DeleteOneAsync(id);
+            if (value.DeletedCount>0) 
+            {
+                return Response<NoContent>.Success(204);
+            }
+            else
+            {
+                return Response<NoContent>.Fail("silinicek data yok ",400);
+            }
         }
 
-        public Task<Response<ResultCategoryDto>> GetCategoryByIdAsync(string id)
+        public async Task<Response<ResultCategoryDto>> GetCategoryByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var value = await _categoryCollection.Find<Category>(x => x.CategoryID == id).FirstOrDefaultAsync();
+            if(value== null)
+            {
+                return  Response<ResultCategoryDto>.Fail("böyle ıd bulunmadı", 404);
+            }
+            else
+            {
+                return Response<ResultCategoryDto>.Success(_mapper.Map<ResultCategoryDto>(value), 200);
+            }
         }
 
         public async Task<Response<List<ResultCategoryDto>>> GetCategoryListAsync()
@@ -45,9 +62,18 @@ namespace Microservices.Catalog.Services.CategoryServices
         }
 
 
-        public Task<Response<UpdateCategoryDto>> UpdateCategoryAsync(UpdateCategoryDto updateCategory)
+        public async Task<Response<UpdateCategoryDto>> UpdateCategoryAsync(UpdateCategoryDto updateCategory)
         {
-            throw new NotImplementedException();
+            var values = _mapper.Map<Category>(updateCategory);
+            var result = await _categoryCollection.FindOneAndReplaceAsync(x => x.CategoryID == updateCategory.CategoryID, values);
+            if (result == null)
+            {
+                return Response<UpdateCategoryDto>.Fail("Güncellenecek veri bulunumadı", 400);
+            }
+            else
+            {
+                return Response<UpdateCategoryDto>.Success(204);
+            }
         }
     }
 }
