@@ -11,5 +11,6 @@ namespace Microservices.Catalog.Services.ProductServices
         Task<Response<CreateProductDto>> CreateProductAsync(CreateProductDto createProductDto);
         Task<Response<UpdateProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto);
         Task<Response<NoContent>> DeleteProductAsync(string id);
+        Task<Response<List<ResultProductDto>>> GetProductListCategoryAsync();
     }
 }

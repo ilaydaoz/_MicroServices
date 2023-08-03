@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microservices.Catalog.Dtos.CategoryDtos;
 using Microservices.Catalog.Dtos.ProductDto;
 using Microservices.Catalog.Models;
 using Microservices.Catalog.Settings.Abstract;
@@ -42,9 +43,17 @@ namespace Microservices.Catalog.Services.ProductServices
             }
         }
 
-        public Task<Response<ResultProductDto>> GetProductByIdAsync(string id)
+        public async Task<Response<ResultProductDto>> GetProductByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var value = await _productCollection.Find<Products>(x => x.ProductID == id).FirstOrDefaultAsync();
+            if (value == null)
+            {
+                return Response<ResultProductDto>.Fail("böyle ıd bulunmadı", 404);
+            }
+            else
+            {
+                return Response<ResultProductDto>.Success(_mapper.Map<ResultProductDto>(value), 200);
+            }
         }
 
         public async Task<Response<List<ResultProductDto>>> GetProductListAsync()
@@ -53,9 +62,36 @@ namespace Microservices.Catalog.Services.ProductServices
             return Response<List<ResultProductDto>>.Success(_mapper.Map<List<ResultProductDto>>(value), 200);
         }
 
-        public Task<Response<UpdateProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto)
+        public async Task<Response<List<ResultProductDto>>> GetProductListCategoryAsync()
         {
-            throw new NotImplementedException();
+            var value = await _productCollection.Find(x => true).ToListAsync();
+            if (value.Any()) 
+            {
+                foreach (var item in value)
+                { 
+                    item.Category=await _categoryCollection.Find<Category> (x=> x.CategoryID== item.CategoryID).FirstOrDefaultAsync();
+                }
+            }
+            else 
+            {
+                value = new List<Products> ();
+            }
+            return Response<List<ResultProductDto>>.Success
+                (_mapper.Map<List<ResultProductDto>>(value), 200);
+        }
+
+        public async Task<Response<UpdateProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto)
+        {
+            var values = _mapper.Map<Products>(updateProductDto);
+            var result = await _productCollection.FindOneAndReplaceAsync(x => x.ProductID == updateProductDto.ProductID, values);
+            if (result == null)
+            {
+                return Response<UpdateProductDto>.Fail("Güncellenecek veri bulunumadı", 400);
+            }
+            else
+            {
+                return Response<UpdateProductDto>.Success(204);
+            }
         }
     }
 }
