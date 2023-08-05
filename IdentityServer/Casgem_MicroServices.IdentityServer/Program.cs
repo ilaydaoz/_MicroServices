@@ -54,7 +54,7 @@ namespace Casgem_MicroServices.IdentityServer
                     var applicationDbContext =servisProvider.GetRequiredService<ApplicationDbContext>();
                     applicationDbContext.Database.Migrate();
                     var usermanager= servisProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    if (usermanager.Users.Any()) 
+                    if (!usermanager.Users.Any()) 
                     {
                         usermanager.CreateAsync(new ApplicationUser
                         {
@@ -63,7 +63,7 @@ namespace Casgem_MicroServices.IdentityServer
                             City = "mersin",
                             Country = "Turkiye",
                             NameSurname = "ilayda ozken",
-                        }, "123456Aa*");
+                        }, "123456Aa*").Wait();
                     }
                 }
                 if (seed)
