@@ -11,20 +11,19 @@ namespace Casgem_MicroServices.IdentityServer
 {
     public static class Config
     {
-        public static IEnumerable<ApiResource> apiResources => new ApiResource[]
-        {
-            new ApiResource("resource_catalog"){Scopes ={"catalog_fullpermission"}},
-            new ApiResource("resource_photo_stock"){Scopes ={"photo_stock_fullpermission"}},
-            new ApiResource("resource_basket"){Scopes ={"basket_fullpermission"}},
-            new ApiResource("resource_discount"){Scopes ={"discount_fullpermission"}},
-            new ApiResource("resource_order"){Scopes ={"order_fullpermission"}},
-            new ApiResource("resource_peyment"){Scopes ={"peyment_fullpermission"}},
-            new ApiResource("resource_gateway"){Scopes ={"gateway_fullpermission"}},
-            new ApiResource("resource_cargo"){Scopes ={"cargo_fullpermission"}},
+        public static IEnumerable<ApiResource> ApiResources => new ApiResource[]
+         {
+            new ApiResource("resource_catalog"){Scopes={"catalog_fullpermission"}},
+                new ApiResource("resource_photo_stock"){Scopes={"photo_stock_fullpermission"}},
+                    new ApiResource("resource_basket"){Scopes={"basket_fullpermission"}},
+                        new ApiResource("resource_discount"){Scopes={"discount_fullpermission"}},
+                            new ApiResource("resource_order"){Scopes={"order_fullpermission"}},
+                                new ApiResource("resource_payment"){Scopes={"payment_fullpermission"}},
+                                    new ApiResource("resource_gateway"){Scopes={"gateway_fullpermission"}},
+                                        new ApiResource("resource_cargo"){Scopes={"cargo_fullpermission"}},
 
-            new ApiResource(IdentityServerConstants.LocalApi.ScopeName)
-        };
-
+                                        new ApiResource(IdentityServerConstants.LocalApi.ScopeName)
+         };
         public static IEnumerable<IdentityResource> IdentityResources =>
                    new IdentityResource[]
                    {
@@ -35,17 +34,17 @@ namespace Casgem_MicroServices.IdentityServer
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
-           new ApiScope[]
+            new ApiScope[]
             {
-                new ApiScope("catalog_fullpermission","Catalog API için full erişim"),
-                new ApiScope("photo_stock_fullpermission","Photo Stock API için full erişim."),
-                new ApiScope("basket_fullpermission","Sepet Stock API için full erişim."),
-                new ApiScope("discount_fullpermission","Discount Stock API için full erişim."),
-                new ApiScope("order_fullpermission","Sipariş Stock API için full erişim."),
-                new ApiScope("cargo_fullpermission","Kargo Stock API için full erişim."),
-                new ApiScope("payment_fullpermission","Ödeme Stock API için full erişim."),
-                new ApiScope("gateway_fullpermission","Gateway Stock API için full erişim."),
-               new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
+                new ApiScope("catalog_fullpermission","Katalog API full erişim"),
+                    new ApiScope("photo_stock_fullpermission","Photo Stock API için full erişim"),
+                        new ApiScope("basket_fullpermission","Sepet API için full erişim"),
+                            new ApiScope("discount_fullpermission","Discount API için full erişim"),
+                                new ApiScope("order_fullpermission","Sipariş API için full erişim"),
+                                    new ApiScope("payment_fullpermission","Payment API için full erişim"),
+                                        new ApiScope("gateway_fullpermission","Gateway API için full erişim"),
+                                            new ApiScope("cargo_fullpermission","Kargo API için full erişim"),
+                                            new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
             };
 
         public static IEnumerable<Client> Clients =>
@@ -54,33 +53,31 @@ namespace Casgem_MicroServices.IdentityServer
                 // m2m client credentials flow client
                 new Client
                 {
-                   ClientName = "Casgem1",
-                   ClientId = "CoreClient1",
-                   ClientSecrets={new Secret("secret".Sha256())},
-                   AllowedGrantTypes=GrantTypes.ClientCredentials,
-                   AllowedScopes={"catalog_fullpermission", "photo_stock_fullpermission",IdentityServerConstants.LocalApi.ScopeName}
+                    ClientId = "CoreClient1",
+                    ClientName = "Casgem1",
+                    ClientSecrets={new Secret("secret".Sha256())},
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowedScopes={"catalog_fullpermission","photo_stock_fulpermission",
+                        IdentityServerConstants.LocalApi.ScopeName}
                 },
 
                 // interactive client using code flow + pkce
                 new Client
                 {
-                   ClientName = "Casgem2",
-                   ClientId = "CoreClient2",
-                   AllowOfflineAccess=true,
-                   ClientSecrets={new Secret("secret".Sha256())},
-                   AllowedGrantTypes=GrantTypes.ResourceOwnerPassword,AllowedScopes=
-                    { "photo_stock_fullpermission", "basket_fullpermission", "order_fullpermission", "dicount_fullpermission", "cargo_fullpermission", "catalog_fullpermission",
-                    IdentityServerConstants.StandardScopes.Email,
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.OfflineAccess,
-                    IdentityServerConstants.LocalApi.ScopeName,"roles"},
-
-                   AccessTokenLifetime=1*60*60,
-                   RefreshTokenExpiration=TokenExpiration.Absolute,
-                   AbsoluteRefreshTokenLifetime=(int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,
+                    ClientId = "CoreClient2",
+                    ClientName = "Casgem2",
+                    ClientSecrets={new Secret("secret".Sha256())},
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AllowedScopes={"basket_fullpermission","order_fulpermission","discount_fullpermission","cargo_fullpermission",
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        IdentityServerConstants.LocalApi.ScopeName,"roles" },
+                    AccessTokenLifetime=1*60*60,
+                    RefreshTokenExpiration=TokenExpiration.Absolute,
+                    AbsoluteRefreshTokenLifetime=(int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,
                     RefreshTokenUsage=TokenUsage.ReUse
-
                 },
             };
     }
